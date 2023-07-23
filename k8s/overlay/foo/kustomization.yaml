@@ -3,7 +3,15 @@ kind: Kustomization
 
 resources:
 - ../../base
-- ingress.yaml
 
-patchesStrategicMerge:
-- deployment.yaml
+namePrefix: foo-
+
+commonLabels:
+  app: foo-echo
+
+patches:
+- path: deployment.yaml
+- target:
+    kind: Ingress
+    name: 
+  path: ingress-patch.json 
