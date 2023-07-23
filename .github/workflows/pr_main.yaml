@@ -26,7 +26,7 @@ jobs:
           kubectl wait --for=condition=Ready pods --all --namespace kube-system
           kubectl get nodes
 
-      - name: Setup helm
+      - name: Setup helm & Kustomize
         run: |
           curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
           sudo apt-get install apt-transport-https --yes
@@ -34,28 +34,45 @@ jobs:
           sudo apt-get update
           sudo apt-get install helm
 
-      - name: Install k6
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+
+      - name: Setup k6
         run: |
           curl https://github.com/grafana/k6/releases/download/v0.44.0/k6-v0.44.0-linux-amd64.tar.gz -L | tar xvz --strip-components 1
 
+      - name: Install nginx controller
+        run: |
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/baremetal/deploy.yaml
+
+          kubectl wait --namespace ingress-nginx \
+            --for=condition=ready pod \
+            --selector=app.kubernetes.io/component=controller \
+            --timeout=90s
+
+      - name: Run daemon port forwarding for nginx ingress at port 8080
+        run: |
+          kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80&
+
+      - name: Add /etc/hosts aliases with 2 custom domains
+        run: |
+          echo "127.0.0.1 foo.localhost bar.localhost" >> /etc/hosts
+
       - name: Install foo service and test
         run: |
-          npx wait-on https://google.com
-          MY_URL=https://google.com ./k6 run --out json=foo.json k6s/script.js
-
-      - name: PR comment with foo test results
-        uses: mshick/add-pr-comment@v2
-        with:
-          message-path: foo.json
-          preformatted: true
+          kubectl apply -k k8s/overlay/foo
+          npx wait-on http://foo.localhost:8080
+          MY_URL=http://foo.localhost:8080 ./k6 run --out json=foo.json k6s/script.js
 
       - name: Install bar service and test
         run: |
-          npx wait-on https://google.com
-          MY_URL=https://google.com ./k6 run --out json=bar.json k6s/script.js
+          kubectl apply -k k8s/overlay/bar
+          npx wait-on http://bar.localhost:8080
+          MY_URL=http://bar.localhost:8080 ./k6 run --out json=bar.json k6s/script.js
 
-      - name: PR comment with bar test results
+      - name: PR comment with test results for both services
         uses: mshick/add-pr-comment@v2
         with:
-          message-path: bar.json
+          message-path: |
+            bar.json
+            foo.json
           preformatted: true
