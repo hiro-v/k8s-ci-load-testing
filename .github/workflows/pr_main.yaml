@@ -41,21 +41,21 @@ jobs:
       - name: Install foo service and test
         run: |
           npx wait-on https://google.com
-          MY_URL=https://google.com ./k6 run --out json=/tmp/foo.json k6s/script.js
+          MY_URL=https://google.com ./k6 run --out json=foo.json k6s/script.js
 
       - name: PR comment with foo test results
         uses: mshick/add-pr-comment@v2
         with:
-          message-path: /tmp/foo.json
+          message-path: foo.json
           preformatted: true
 
       - name: Install bar service and test
         run: |
           npx wait-on https://google.com
-          MY_URL=https://google.com ./k6 run --out json=/tmp/bar.json k6s/script.js
+          MY_URL=https://google.com ./k6 run --out json=bar.json k6s/script.js
 
       - name: PR comment with bar test results
         uses: mshick/add-pr-comment@v2
         with:
-          message-path: /tmp/bar.json
+          message-path: bar.json
           preformatted: true
