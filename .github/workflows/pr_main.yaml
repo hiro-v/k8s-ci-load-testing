@@ -55,7 +55,7 @@ jobs:
 
       - name: Add /etc/hosts aliases with 2 custom domains
         run: |
-          echo "127.0.0.1 foo.localhost bar.localhost" >> /etc/hosts
+          sudo echo "127.0.0.1 foo.localhost bar.localhost" | sudo tee -a /etc/hosts
 
       - name: Install foo service and test
         run: |
