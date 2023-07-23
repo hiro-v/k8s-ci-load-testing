@@ -42,18 +42,20 @@ jobs:
         run: |
           npx wait-on https://google.com
           MY_URL=https://google.com ./k6 run --out json=foo.json k6s/script.js
+          pwd
 
       - name: PR comment with foo test results
         uses: thollander/actions-comment-pull-request@v2
         with:
-          filePath: foo.json
+          filePath: ./foo.json
 
       - name: Install bar service and test
         run: |
           npx wait-on https://google.com
           MY_URL=https://google.com ./k6 run --out json=bar.json k6s/script.js
+          pwd
 
       - name: PR comment with bar test results
         uses: thollander/actions-comment-pull-request@v2
         with:
-          filePath: bar.json
+          filePath: ./bar.json
