@@ -40,5 +40,5 @@ jobs:
 
       - name: Install foo service and test
         run: |
-          kubectl apply -k k8s/overlay/foo & npx wait-on https://google.com
+          npx wait-on https://google.com
           MY_URL=https://google.com ./k6 run k6s/script.js
