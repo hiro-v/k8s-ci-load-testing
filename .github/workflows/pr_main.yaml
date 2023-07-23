@@ -47,13 +47,15 @@ jobs:
         uses: mshick/add-pr-comment@v2
         with:
           message-path: /tmp/foo.json
+          preformatted: true
 
       - name: Install bar service and test
         run: |
           npx wait-on https://google.com
-          MY_URL=https://google.com ./k6 run --out json=bar.json k6s/script.js
+          MY_URL=https://google.com ./k6 run --out json=/tmp/bar.json k6s/script.js
 
       - name: PR comment with bar test results
         uses: mshick/add-pr-comment@v2
         with:
           message-path: /tmp/bar.json
+          preformatted: true
