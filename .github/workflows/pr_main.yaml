@@ -41,19 +41,19 @@ jobs:
       - name: Install foo service and test
         run: |
           npx wait-on https://google.com
-          MY_URL=https://google.com ./k6 run --out csv=/tmp/foo.csv k6s/script.js
+          MY_URL=https://google.com ./k6 run --out json=/tmp/foo.json k6s/script.js
 
       - name: PR comment with foo test results
         uses: mshick/add-pr-comment@v2
         with:
-          message-path: /tmp/foo.csv
+          message-path: /tmp/foo.json
 
       - name: Install bar service and test
         run: |
           npx wait-on https://google.com
-          MY_URL=https://google.com ./k6 run --out csv=bar.csv k6s/script.js
+          MY_URL=https://google.com ./k6 run --out json=bar.json k6s/script.js
 
       - name: PR comment with bar test results
         uses: mshick/add-pr-comment@v2
         with:
-          message-path: /tmp/bar.csv
+          message-path: /tmp/bar.json
