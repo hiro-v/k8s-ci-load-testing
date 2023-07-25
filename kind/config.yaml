@@ -1,6 +1,13 @@
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
+# kind config file
+kind: Cluster  # Specifies the kind of the top-level object, which is a Cluster.
+apiVersion: kind.x-k8s.io/v1alpha4  # The version of the kind API
+
+# Defines the configuration for the nodes
 nodes:
-- role: control-plane
-- role: worker
-- role: worker
+
+  # First node is the control plane node.
+  - role: control-plane  # This node acts as the master node
+
+  # Worker nodes
+  - role: worker  # This node acts as a worker node
+  - role: worker  # Another worker node
