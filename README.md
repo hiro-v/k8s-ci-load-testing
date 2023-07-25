@@ -1,5 +1,16 @@
 # Load testing in CI for stack on Kubernetes
 
+
+- [Load testing in CI for stack on Kubernetes](#load-testing-in-ci-for-stack-on-kubernetes)
+  - [High level workflow](#high-level-workflow)
+  - [Techstack](#techstack)
+  - [Files and purposes](#files-and-purposes)
+  - [Checklist](#checklist)
+  - [Time estimation (Total: 3.5 hours)](#time-estimation-total-35-hours)
+  - [How to reproduce](#how-to-reproduce)
+  - [Contact](#contact)
+
+
 ## High level workflow
 ![Workflow](./docs/images/workflow.jpg "Workflow")
 The workflow:
@@ -96,3 +107,13 @@ The workflow:
     - Setup repo, settings (read/ write permission for posting PR comment)
     - Add workflow and test things out
 - Write document and add code comment/ check for fail case (1 hour)
+
+## How to reproduce
+- Get this repo (fork/ download as zip and push to your repo)
+- (You are admin) Go to `Settings` -> `Actions` -> `General` -> `Workflow permissions` -> Tick `Read and write permissions` (this is to ensure PR comment has enough permission)
+- At this stage, you are at `main` branch, please checkout, push to a new branch, create a pull request
+- Wait for the job to be triggered and run, it's expected to run normally on Github action managed runner (on azure)
+
+## Contact
+If you have anything goes wrong, please feel free to contact me at this Github account, or email `vuonghoainam.work@gmail.com`
+Cheers
