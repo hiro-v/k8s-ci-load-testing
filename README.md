@@ -4,7 +4,7 @@
 ![Workflow](./docs/images/workflow.jpg "Workflow")
 The workflow:
 - Run on Github action runner
-- Trigger: On every Pull request for `main`
+- Trigger: On every Pull request for `main` or `workflow_dispatch `(trigger manually)
 - Steps:
     - Spin up `Kind` cluster with 1 master, 2 workers
     - Setup tools & environment
