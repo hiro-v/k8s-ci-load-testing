@@ -86,3 +86,13 @@ The workflow:
 - [x] Generate a load of randomized traffic for bar and foo hosts and capture the load testing result - `k6s`
 - [x] Post the output of the load testing result as comment on the GitHub Pull Request (automated the CI job). Depending on the report your load testing script generates - http request duration (avg, p90, p95, ...), % of http request failed, req/s handled.
 - [ ] Setup Prometheus/ Grafana to monitor cluster/ pod level metrics: CPU, Memory, Disk, Network
+
+## Time estimation (Total: 3.5 hours)
+- Testing locally (1.5 hours)
+    - Kind setup (`kind/`)
+    - k6s script in `k6s/`
+    - Kustomize script in `k8s/`
+- Testing on Github action (1 hour)
+    - Setup repo, settings (read/ write permission for posting PR comment)
+    - Add workflow and test things out
+- Write document and add code comment/ check for fail case (1 hour)
