@@ -1,16 +1,17 @@
-apiVersion: apps/v1
-kind: Deployment
+# This is a deployment configuration file.
+apiVersion: apps/v1  # The apiVersion for Deployment resource
+kind: Deployment  # The kind of the resource, in this case a Deployment
 metadata:
-  name: echo
+  name: echo  # The name of the deployment
 spec:
   selector:
     matchLabels:
-      app: echo
+      app: echo  # The selector for the pods managed by this deployment
   template:
     metadata:
       labels:
-        app: echo
+        app: echo  # The label for the pods created by this deployment
     spec:
       containers:
-      - name: echo
-        args: ["-text=foo"]
+      - name: echo  # The name of the container inside the pod
+        args: ["-text=foo"]  # The arguments passed to the application/command inside the container. In this case, it will print "bar"

@@ -1,9 +1,11 @@
-apiVersion: v1
-kind: Service
+# This file defines a Service resource which exposes an application running on a set of Pods
+apiVersion: v1  # The apiVersion for Service resource
+kind: Service  # The kind of the resource
 metadata:
-  name: echo
+  name: echo  # The name of the service
 spec:
+  # Defines the ports and protocol for this service
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 5678
+    - protocol: TCP  # The protocol used by the port
+      port: 80  # The port number which will be exposed by this service
+      targetPort: 5678  # The target port on the pods where the network traffic will be sent

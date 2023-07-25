@@ -1,19 +1,20 @@
-apiVersion: apps/v1
-kind: Deployment
+# This file defines a Deployment resource that manages a replicated application on your cluster
+apiVersion: apps/v1  # The apiVersion for Deployment resource
+kind: Deployment  # The kind of the resource
 metadata:
-  name: echo
+  name: echo  # The name of the deployment
 spec:
-  replicas: 1
+  replicas: 1  # The number of replicas (pods) to be created by this deployment
   selector:
     matchLabels:
-      app: echo
+      app: echo  # The selector for the pods managed by this deployment
   template:
     metadata:
       labels:
-        app: echo
+        app: echo  # The label for the pods created by this deployment
     spec:
       containers:
-      - name: echo
-        image: hashicorp/http-echo
+      - name: echo  # The name of the container inside the pod
+        image: hashicorp/http-echo  # The image used to create the containers
         ports:
-        - containerPort: 5678
+        - containerPort: 5678  # The port exposed by the container

@@ -1,19 +1,20 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+# This file defines an Ingress resource that manages external access to the services in a cluster
+apiVersion: networking.k8s.io/v1  # The apiVersion for Ingress resource
+kind: Ingress  # The kind of the resource
 metadata:
-  name: echo
+  name: echo  # The name of the ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /  # Annotation used to rewrite the path
 spec:
-  ingressClassName: nginx
+  ingressClassName: nginx  # The class of the Ingress controller
   rules:
-  - host: "*.localhost"
+  - host: "*.localhost"  # The domain that this rule applies to
     http:
       paths:
-      - pathType: Prefix
-        path: "/"
+      - pathType: Prefix  # The matching type on the path
+        path: "/"  # The path that should match this rule
         backend:
           service:
-            name: echo-service
+            name: echo-service  # The name of the service that will be used for this rule
             port:
-              number: 80
+              number: 80  # The port of the service that will be used for this rule

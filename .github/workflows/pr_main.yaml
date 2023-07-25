@@ -1,17 +1,27 @@
+# This is the name of the GitHub action workflow
 name: Kind
+# Defines the event(s) that triggers the workflow
 on:
-  workflow_dispatch:
-  pull_request:
+  workflow_dispatch:  # Allows you to trigger the workflow manually from the GitHub Actions tab
+  pull_request:  # Triggered whenever there is a new pull request
     branches:
-      - main
+      - main  # Only for pull requests to the 'main' branch
 
+# The jobs that the workflow will run
 jobs:
+  # This job sets up a Kubernetes cluster using Kind and runs some tests
   kind:
-    runs-on: ubuntu-latest
+    # Specifies the type of runner that the job will run on
+    runs-on: ubuntu-latest  # Latest version of Ubuntu
+    # A list of steps to be performed by this job
     steps:
-      - uses: actions/checkout@master
-      - name: Setup kind
-        run: |
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@master  
+
+      - name: Setup kind  # Setting up kind
+        run: |  # The command(s) to run
+          # The rest of this block is a series of commands to setup the kind cluster
+
           export GOBIN=$(go env GOPATH)/bin
           export PATH=$PATH:$GOBIN
           mkdir -p $GOBIN
@@ -26,8 +36,10 @@ jobs:
           kubectl wait --for=condition=Ready pods --all --namespace kube-system
           kubectl get nodes
 
-      - name: Setup helm & Kustomize
-        run: |
+      - name: Setup helm & Kustomize   # Setup Helm and Kustomize
+        run: | # The command(s) to run
+          # The rest of this block is a series of commands to setup Helm and Kustomize
+
           curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
           sudo apt-get install apt-transport-https --yes
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
@@ -36,12 +48,16 @@ jobs:
 
           curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
 
-      - name: Setup k6
-        run: |
+      - name: Setup k6 # Setting up K6
+        run: | # The command(s) to run
+          # This command downloads and installs K6, a load testing tool
+
           curl https://github.com/grafana/k6/releases/download/v0.44.0/k6-v0.44.0-linux-amd64.tar.gz -L | tar xvz --strip-components 1
 
-      - name: Install nginx controller
-        run: |
+      - name: Install nginx controller # Install Nginx ingress controller
+        run: | # The command(s) to run
+          # The rest of this block is a series of commands to setup Nginx ingress controller
+
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/baremetal/deploy.yaml
 
           kubectl wait --namespace ingress-nginx \
@@ -49,30 +65,33 @@ jobs:
             --selector=app.kubernetes.io/component=controller \
             --timeout=90s
 
-      - name: Run daemon port forwarding for nginx ingress at port 8080
+      # Setup port forwarding for Nginx Ingress to Github action runner host
+      - name: Run daemon port forwarding for nginx ingress at port 8080 
         run: |
           kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80&
 
-      - name: Add /etc/hosts aliases with 2 custom domains
+      - name: Add /etc/hosts aliases with 2 custom domains # Setup custom domains for testing
         run: |
           sudo echo "127.0.0.1 foo.localhost bar.localhost" | sudo tee -a /etc/hosts
 
-      - name: Install foo service and test
+      - name: Install foo service and test # Install and load test the foo service
         run: |
           kubectl apply -k k8s/overlay/foo
           npx wait-on http://foo.localhost:8080
           MY_URL=http://foo.localhost:8080 ./k6 run --out json=foo.json k6s/script.js
 
-      - name: Install bar service and test
+      - name: Install bar service and test # Install and load test the bar service
         run: |
           kubectl apply -k k8s/overlay/bar
           npx wait-on http://bar.localhost:8080
           MY_URL=http://bar.localhost:8080 ./k6 run --out json=bar.json k6s/script.js
 
-      - name: PR comment with test results for both services
-        uses: mshick/add-pr-comment@v2
+      - name: PR comment with test results for both services # Leave a comment on the PR with the test results
+        uses: mshick/add-pr-comment@v2  # This action allows to add comments to the PR
         with:
           message-path: |
+            # The file containing the test results for the bar service
             bar.json
+            # The file containing the test results for the foo service
             foo.json
-          preformatted: true
+          preformatted: true # This option ensures that the content of the files is rendered as preformatted text in the comment

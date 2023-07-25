@@ -1,17 +1,21 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
+# This is the main Kustomization file which is used by Kustomize to apply a set of customization on k8s resources
+apiVersion: kustomize.config.k8s.io/v1beta1  # The apiVersion for Kustomization resource
+kind: Kustomization  # The kind of the resource
 
+# Specifies the resources that Kustomize should use as the basis for generating the final configurations
 resources:
-- ../../base
+- ../../base  # Path to the base kustomization directory
 
+# A prefix that will be added to all resources that are created or modified by this kustomization
 namePrefix: bar-
 
+# Labels to add to all resources and selectors
 commonLabels:
-  app: bar-echo
+  app: bar-echo  # The common label that will be added to all resources
 
+# List of patches that are applied to the resources. Patches modify the base resources as per the requirements.
 patches:
-- path: deployment.yaml
-- target:
-    kind: Ingress
-    name: 
-  path: ingress-patch.json 
+- path: deployment.yaml  # The path to the patch for deployment resource
+- target:  
+    kind: Ingress  # The kind of resource the patch is applied to
+  path: ingress-patch.json  # The path to the patch for Ingress resource
